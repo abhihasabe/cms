@@ -18,19 +18,22 @@ import 'package:cms/PlatformService.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 
-class AddCompanyWidget extends StatefulWidget {
-  const AddCompanyWidget({Key? key}) : super(key: key);
+class AAddCompanyWidget extends StatefulWidget {
+  const AAddCompanyWidget({Key? key}) : super(key: key);
 
   @override
-  _HRAddCompanyWidgetState createState() => _HRAddCompanyWidgetState();
+  _AddCompanyWidgetState createState() => _AddCompanyWidgetState();
 }
 
-class _HRAddCompanyWidgetState extends State<AddCompanyWidget> {
+class _AddCompanyWidgetState extends State<AAddCompanyWidget> {
   var brightness, token;
   List<String>? deptTypesResp = [];
   List<String>? countryResp = [];
   List<String>? cityResp = [];
-  List<String> _selectedItems = [];
+  List<ListData> _selectedCountryItems = [];
+  List<ListData> _selectedCityItems = [];
+  List<int> _selectedCountryIds = [];
+  List<int> _selectedCityIds = [];
   String? _cityType = "", _countryType = "", _companyType = "";
   final TextEditingController _companyNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -45,8 +48,8 @@ class _HRAddCompanyWidgetState extends State<AddCompanyWidget> {
       _companyNameController.text.isNotEmpty &&
       _companyType!.length > 0 &&
       _emailController.text.isNotEmpty &&
-      _countryType!.length > 0 &&
-      _cityType!.length > 0;
+      _selectedCountryIds.length > 0 &&
+      _selectedCityIds.length > 0;
 
   @override
   void initState() {
@@ -75,8 +78,10 @@ class _HRAddCompanyWidgetState extends State<AddCompanyWidget> {
     }
   }
 
-  void _showMultiSelect() async {
-    final List<String>? results = await showDialog(
+  void _showCountry() async {
+    _selectedCountryIds.clear();
+    _cityType = null;
+    final List<ListData> results = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return MultiSelect(items: countryResp!, title: "Country");
@@ -86,7 +91,49 @@ class _HRAddCompanyWidgetState extends State<AddCompanyWidget> {
     // Update UI
     if (results != null) {
       setState(() {
-        _selectedItems = results;
+        _selectedCountryItems = results;
+        FocusScope.of(context).requestFocus(FocusNode());
+        for (var id in _selectedCountryItems) {
+          _selectedCountryIds.add(id.items!);
+        }
+        print("_selectedCountryIds $_selectedCountryIds");
+        if (_selectedCountryIds != null) {
+          //context.read<AddCompanyCubit>().countryChanged(_selectedCountryIds);
+          context
+              .read<AddCompanyCubit>()
+              .getCityData(token, _selectedCountryIds)
+              .then((value) {
+            if (cityResp != null && cityResp!.length > 0) {
+              cityResp!.clear();
+            }
+            for (var element in value) {
+              cityResp?.add(element.cityName!);
+            }
+            setState(() {});
+          });
+        }
+      });
+    }
+  }
+
+  void _showCity() async {
+    final List<ListData> results = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiSelect(items: cityResp!, title: "City");
+      },
+    );
+
+    // Update UI
+    if (results != null) {
+      setState(() {
+        _selectedCityItems = results;
+        FocusScope.of(context).requestFocus(FocusNode());
+        for (var id in _selectedCityItems) {
+          _selectedCityIds.add(id.items!);
+        }
+        //context.read<AddCompanyCubit>().cityChanged(_selectedCityIds);
+        print("_selectedCityIds $_selectedCityIds");
       });
     }
   }
@@ -295,67 +342,211 @@ class _HRAddCompanyWidgetState extends State<AddCompanyWidget> {
                           AppLocalization.of(context)!.translate('pew')!,
                     ),
                     const SizedBox(height: DIMENSION_22),
-                    DropdownWidget(
-                      context: context,
-                      hintText:
-                      AppLocalization.of(context)!.translate('country'),
-                      label: AppLocalization.of(context)!.translate('country'),
-                      prefixIcon: const Icon(
-                        Icons.local_airport,
-                        color: hoverColorDarkColor,
-                      ),
-                      items: countryResp,
-                      value: _countryType,
-                      onChoose: (newValue, index) {
-                        setState(() {
-                          _countryType = newValue;
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          cityResp?.clear();
-                          _cityType = "";
-                          context
-                              .read<AddCompanyCubit>()
-                              .countryChanged(index + 1);
-                          if (_countryType != null) {
-                            context
-                                .read<AddCompanyCubit>()
-                                .getCity(token, index + 1)
-                                .then((value) {
-                              value.forEach((element) {
-                                cityResp?.add(element.cityName!);
-                              });
-                              setState(() {});
-                            });
-                          }
-                        });
+                    TextFormField(
+                      onTap: () {
+                        _selectedCountryItems.clear();
+                        _selectedCityItems.clear();
+                        _showCountry();
                       },
-                      errorMessage: state.country.invalid
-                          ? AppLocalization.of(context)!.translate('psctry')
-                          : null,
+                      style: TextStyle(
+                        color: (brightness == Brightness.dark)
+                            ? textDarkColor
+                            : textColor,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w200,
+                        fontStyle: FontStyle.normal,
+                        letterSpacing: 1.2,
+                      ),
+                      decoration: InputDecoration(
+                        //errorText: "Please Select Country *",
+                        prefixIcon: const Icon(
+                          Icons.location_city,
+                          color: hoverColorDarkColor,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.arrow_drop_down,
+                              size: 18,
+                              color: (brightness == Brightness.dark)
+                                  ? hoverColorDarkColor
+                                  : hoverColorDarkColor),
+                          onPressed: () {},
+                        ),
+                        label: Text(
+                          "Country *",
+                          style: TextStyle(
+                              color: (brightness == Brightness.dark)
+                                  ? labelDarkColor
+                                  : labelColor),
+                        ),
+                        hintText: "Country *",
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: (brightness == Brightness.dark)
+                                    ? enableBorderDarkColor
+                                    : enableBorderColor)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: (brightness == Brightness.dark)
+                                    ? enableBorderDarkColor
+                                    : enableBorderColor)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: (brightness == Brightness.dark)
+                                    ? focusedBorderDarkColor
+                                    : focusedBorderColor)),
+                        hintStyle: const TextStyle(
+                            fontSize: dimens.fontInputWidget,
+                            color: backgroundDarkColor,
+                            fontWeight: FontWeight.w300,
+                            fontStyle: FontStyle.normal,
+                            letterSpacing: 1.2),
+                        isDense: true,
+                        contentPadding: const EdgeInsets.only(
+                            top: dimens.FONT_12,
+                            bottom: dimens.FONT_12,
+                            left: 8.0,
+                            right: 8.0),
+                        errorStyle: const TextStyle(
+                          color: errorColor,
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w300,
+                          fontStyle: FontStyle.normal,
+                          letterSpacing: 1.2,
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: errorColor),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: errorColor),
+                        ),
+                      ),
+                      readOnly: true,
                     ),
+                    _selectedCountryItems != null
+                        ? SizedBox(
+                            width: double.infinity,
+                            child: Wrap(
+                              children: _selectedCountryItems
+                                  .map((e) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Chip(
+                                          backgroundColor: primaryColor,
+                                          label: Text(
+                                            e.name.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                            ),
+                          )
+                        : const SizedBox(
+                            height: 0,
+                          ),
                     const SizedBox(height: DIMENSION_22),
-                    DropdownWidget(
-                      context: context,
-                      hintText: AppLocalization.of(context)!.translate('city'),
-                      label: AppLocalization.of(context)!.translate('city'),
-                      prefixIcon: const Icon(
-                        Icons.location_city,
-                        color: hoverColorDarkColor,
-                      ),
-                      items: cityResp,
-                      value: _cityType,
-                      onChoose: (newValue, index) {
-                        setState(() {
-                          _cityType = newValue;
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          context
-                              .read<AddCompanyCubit>()
-                              .cityChanged(index + 1);
-                        });
+                    TextFormField(
+                      onTap: () {
+                        _showCity();
                       },
-                      errorMessage: state.city.invalid
-                          ? AppLocalization.of(context)!.translate('pscty')
-                          : null,
+                      style: TextStyle(
+                        color: (brightness == Brightness.dark)
+                            ? textDarkColor
+                            : textColor,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w200,
+                        fontStyle: FontStyle.normal,
+                        letterSpacing: 1.2,
+                      ),
+                      decoration: InputDecoration(
+                        //errorText: "Please Select Country *",
+                        prefixIcon: const Icon(
+                          Icons.location_city,
+                          color: hoverColorDarkColor,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.arrow_drop_down,
+                              size: 18,
+                              color: (brightness == Brightness.dark)
+                                  ? hoverColorDarkColor
+                                  : hoverColorDarkColor),
+                          onPressed: () {},
+                        ),
+                        label: Text(
+                          "City *",
+                          style: TextStyle(
+                              color: (brightness == Brightness.dark)
+                                  ? labelDarkColor
+                                  : labelColor),
+                        ),
+                        hintText: "City *",
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: (brightness == Brightness.dark)
+                                    ? enableBorderDarkColor
+                                    : enableBorderColor)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: (brightness == Brightness.dark)
+                                    ? enableBorderDarkColor
+                                    : enableBorderColor)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: (brightness == Brightness.dark)
+                                    ? focusedBorderDarkColor
+                                    : focusedBorderColor)),
+                        hintStyle: const TextStyle(
+                            fontSize: dimens.fontInputWidget,
+                            color: backgroundDarkColor,
+                            fontWeight: FontWeight.w300,
+                            fontStyle: FontStyle.normal,
+                            letterSpacing: 1.2),
+                        isDense: true,
+                        contentPadding: const EdgeInsets.only(
+                            top: dimens.FONT_12,
+                            bottom: dimens.FONT_12,
+                            left: 8.0,
+                            right: 8.0),
+                        errorStyle: const TextStyle(
+                          color: errorColor,
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w300,
+                          fontStyle: FontStyle.normal,
+                          letterSpacing: 1.2,
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: errorColor),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: errorColor),
+                        ),
+                      ),
+                      readOnly: true,
                     ),
+                    _selectedCityItems != null
+                        ? SizedBox(
+                            width: double.infinity,
+                            child: Wrap(
+                              children: _selectedCityItems
+                                  .map((e) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Chip(
+                                          backgroundColor: primaryColor,
+                                          label: Text(
+                                            e.name.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                            ),
+                          )
+                        : const SizedBox(
+                            height: 0,
+                          ),
                     const SizedBox(height: DIMENSION_22),
                     InputTextFormFieldWidget(
                       controller: _comapnyInfoController,

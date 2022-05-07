@@ -79,7 +79,7 @@ class _HRAddCompanyWidgetState extends State<HRAddCompanyWidget> {
     final List<String>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(items: countryResp!);
+        return MultiSelect(items: countryResp!, title:"Country");
       },
     );
 

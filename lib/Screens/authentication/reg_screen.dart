@@ -32,19 +32,20 @@ class _RegScreenState extends State<RegScreen> {
   final TextEditingController _mobileNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   bool get isPopulated =>
       _userNameController.text.isNotEmpty &&
-      _emailController.text.isNotEmpty &&
-      _passwordController.text.isNotEmpty &&
-      _confirmPasswordController.text.isNotEmpty;
+          _emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty &&
+          _confirmPasswordController.text.isNotEmpty;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    brightness = MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
+    brightness = MediaQueryData
+        .fromWindow(WidgetsBinding.instance!.window)
         .platformBrightness;
   }
 
@@ -66,8 +67,14 @@ class _RegScreenState extends State<RegScreen> {
           return Stack(
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.5,
-                width: MediaQuery.of(context).size.width,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.5,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 child: Container(
                   decoration: const BoxDecoration(
                     color: Color(0xff2470c7),
@@ -112,8 +119,14 @@ class _RegScreenState extends State<RegScreen> {
             Radius.circular(20),
           ),
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.75,
-            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height * 0.75,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.8,
             decoration: const BoxDecoration(
               color: Colors.white,
             ),
@@ -142,7 +155,7 @@ class _RegScreenState extends State<RegScreen> {
                       onChange: (name) =>
                           context.read<RegCubit>().nameChanged(name),
                       parametersValidate:
-                          AppLocalization.of(context)!.translate('peuname'),
+                      AppLocalization.of(context)!.translate('peuname'),
                     ),
                     const SizedBox(height: DIMENSION_10),
                     InputTextFormFieldWidget(
@@ -161,7 +174,7 @@ class _RegScreenState extends State<RegScreen> {
                       onChange: (name) =>
                           context.read<RegCubit>().emailChanged(name),
                       parametersValidate:
-                          AppLocalization.of(context)!.translate('peeid'),
+                      AppLocalization.of(context)!.translate('peeid'),
                     ),
                     const SizedBox(height: DIMENSION_10),
                     InputTextFormFieldWidget(
@@ -180,13 +193,13 @@ class _RegScreenState extends State<RegScreen> {
                       onChange: (name) =>
                           context.read<RegCubit>().numberChanged(name),
                       parametersValidate:
-                          AppLocalization.of(context)!.translate('peno'),
+                      AppLocalization.of(context)!.translate('peno'),
                     ),
                     const SizedBox(height: DIMENSION_10),
                     InputTextFormFieldWidget(
                       controller: _passwordController,
                       hintText:
-                          AppLocalization.of(context)!.translate('password'),
+                      AppLocalization.of(context)!.translate('password'),
                       textCapitalization: TextCapitalization.sentences,
                       textInputType: TextInputType.text,
                       actionKeyboard: TextInputAction.next,
@@ -196,14 +209,14 @@ class _RegScreenState extends State<RegScreen> {
                       suffixIcon: const Icon(Icons.visibility,
                           color: hoverColorDarkColor),
                       prefixIcon:
-                          const Icon(Icons.lock, color: hoverColorDarkColor),
+                      const Icon(Icons.lock, color: hoverColorDarkColor),
                       errorMessage: state.password.invalid
                           ? AppLocalization.of(context)!.translate('pepass')
                           : null,
                       onChange: (name) =>
                           context.read<RegCubit>().passwordChanged(name),
                       parametersValidate:
-                          AppLocalization.of(context)!.translate('pepass'),
+                      AppLocalization.of(context)!.translate('pepass'),
                     ),
                     const SizedBox(height: DIMENSION_10),
                     InputTextFormFieldWidget(
@@ -218,15 +231,16 @@ class _RegScreenState extends State<RegScreen> {
                       suffixIcon: const Icon(Icons.visibility,
                           color: hoverColorDarkColor),
                       prefixIcon:
-                          const Icon(Icons.lock, color: hoverColorDarkColor),
+                      const Icon(Icons.lock, color: hoverColorDarkColor),
                       errorMessage: state.confirmPassword.invalid
                           ? AppLocalization.of(context)!.translate('pecpass')
                           : null,
-                      onChange: (name) => context
-                          .read<RegCubit>()
-                          .confirmPassword(name, _passwordController.text),
+                      onChange: (name) =>
+                          context
+                              .read<RegCubit>()
+                              .confirmPassword(name, _passwordController.text),
                       parametersValidate:
-                          AppLocalization.of(context)!.translate('pecpass'),
+                      AppLocalization.of(context)!.translate('pecpass'),
                     ),
                     const SizedBox(height: DIMENSION_20),
                     ButtonWidget(
@@ -250,22 +264,22 @@ class _RegScreenState extends State<RegScreen> {
                       borderRadius: DIMENSION_5,
                       onClick: isPopulated && state.status.isValidated
                           ? () {
-                              Network().check().then((intenet) {
-                                if (intenet != null && intenet) {
-                                  context.read<RegCubit>().userReg("admin");
-                                } else {
-                                  showToast(
-                                    "Please Check Internet Connection",
-                                    duration: const Duration(seconds: 3),
-                                    position: ToastPosition.bottom,
-                                    backgroundColor:
-                                        Colors.black.withOpacity(0.8),
-                                    radius: 13.0,
-                                    textStyle: const TextStyle(fontSize: 18.0),
-                                  );
-                                }
-                              });
-                            }
+                        Network().check().then((intenet) {
+                          if (intenet != null && intenet) {
+                            context.read<RegCubit>().userReg("admin");
+                          } else {
+                            showToast(
+                              "Please Check Internet Connection",
+                              duration: const Duration(seconds: 3),
+                              position: ToastPosition.bottom,
+                              backgroundColor:
+                              Colors.black.withOpacity(0.8),
+                              radius: 13.0,
+                              textStyle: const TextStyle(fontSize: 18.0),
+                            );
+                          }
+                        });
+                      }
                           : null,
                     ),
                     const SizedBox(
@@ -288,7 +302,7 @@ class _RegScreenState extends State<RegScreen> {
           text: AppLocalization.of(context)!.translate('ahaacc'),
           small: true,
           textColor:
-              (brightness == Brightness.dark) ? textDarkColor : textColor,
+          (brightness == Brightness.dark) ? textDarkColor : textColor,
         ),
         const SizedBox(width: DIMENSION_5),
         InkWell(
@@ -314,7 +328,7 @@ class _RegScreenState extends State<RegScreen> {
       small: true,
       bold: true,
       textColor:
-          (brightness == Brightness.dark) ? primaryDarkColor : primaryColor,
+      (brightness == Brightness.dark) ? primaryDarkColor : primaryColor,
     );
   }
 }

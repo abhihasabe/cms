@@ -1,4 +1,4 @@
-import 'package:cms/Screens/admin/compnay/addcompany/add_comapny_widget.dart';
+import 'package:cms/Screens/admin/compnay/addcompany/1add_comapny_widget.dart';
 import 'package:cms/Screens/admin/employee/addemployee/add_employee_widget.dart';
 import 'package:cms/Screens/hr/employee/hraddemployee/hr_add_employee_widget.dart';
 import 'package:cms/widgets/app_scaffold_widget.dart';

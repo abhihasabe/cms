@@ -1,26 +1,21 @@
-import 'package:cms/PlatformService.dart';
-import 'package:cms/bloc_cubits/add_company_cubit/add_company_cubit.dart';
-import 'package:cms/bloc_cubits/add_company_cubit/add_company_state.dart';
 import 'package:cms/bloc_cubits/add_employee_cubit/add_employee_cubit.dart';
 import 'package:cms/bloc_cubits/add_employee_cubit/add_employee_state.dart';
-import 'package:cms/helper/dialog.helper.dart';
-import 'package:cms/localization/app_localization.dart';
-import 'package:cms/routes/app_routes_names.dart';
-import 'package:cms/storage/cache/secure_storage_helper.dart';
-import 'package:cms/theme/app_colors.dart';
-import 'package:cms/theme/app_dimension.dart';
+import 'package:cms/bloc_cubits/add_company_cubit/add_company_cubit.dart';
 import 'package:cms/theme/app_shared_preferences_constant.dart';
-import 'package:cms/utils/age_data.dart';
-import 'package:cms/widgets/button_widget.dart';
-import 'package:cms/widgets/dropdown_widget.dart';
-import 'package:cms/widgets/header_widget.dart';
+import 'package:cms/storage/cache/secure_storage_helper.dart';
+import 'package:cms/localization/app_localization.dart';
 import 'package:cms/widgets/input_field_widget.dart';
-import 'package:cms/widgets/radio_button_widget.dart';
-import 'package:cms/widgets/text_widget.dart';
-import 'package:flutter/material.dart';
+import 'package:cms/routes/app_routes_names.dart';
+import 'package:cms/widgets/dropdown_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:formz/formz.dart';
+import 'package:cms/widgets/button_widget.dart';
+import 'package:cms/helper/dialog.helper.dart';
+import 'package:cms/theme/app_dimension.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:cms/theme/app_colors.dart';
+import 'package:cms/PlatformService.dart';
+import 'package:flutter/material.dart';
+import 'package:formz/formz.dart';
 
 class AddEmployeeWidget extends StatefulWidget {
   const AddEmployeeWidget({Key? key}) : super(key: key);

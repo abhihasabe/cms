@@ -62,7 +62,7 @@ class HRSideMenu extends StatelessWidget {
               title: "Add Employee",
               svgSrc: "assets/icons/menu_doc.svg",
               press: () {
-                VxNavigator.of(context).push(Uri.parse(leaveScreen));
+                VxNavigator.of(context).push(Uri.parse(hrAddEmployeeScreen));
               },
               textColor: textColor),
           SideMenuItem(

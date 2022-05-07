@@ -1,24 +1,44 @@
+import 'package:cms/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class MultiSelect extends StatefulWidget {
   final List<String> items;
-  const MultiSelect({Key? key, required this.items}) : super(key: key);
+  final String title;
+
+  const MultiSelect({Key? key, required this.items, required this.title})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MultiSelectState();
 }
 
+class ListData {
+  int? items;
+  String? name;
+
+  ListData({this.items, this.name});
+
+  @override
+  String toString() {
+    return '{ ${this.items}, ${this.name} }';
+  }
+}
+
 class _MultiSelectState extends State<MultiSelect> {
   // this variable holds the selected items
-  final List<String> _selectedItems = [];
+  final List<ListData> _selectedItems = [];
 
 // This function is triggered when a checkbox is checked or unchecked
-  void _itemChange(String itemValue, bool isSelected) {
+  void _itemChange(int itemValue, String value, bool isSelected) {
     setState(() {
       if (isSelected) {
-        _selectedItems.add(itemValue);
+        for (int i = 0; i < itemValue.toString().length; i++) {
+          _selectedItems.add(ListData(items: itemValue + 1, name: value));
+        }
       } else {
-        _selectedItems.remove(itemValue);
+        _selectedItems.removeWhere((itemValue) {
+          return itemValue.name!.contains(value);
+        });
       }
     });
   }
@@ -33,22 +53,47 @@ class _MultiSelectState extends State<MultiSelect> {
     Navigator.pop(context, _selectedItems);
   }
 
+  List<bool>? isChecked;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    isChecked = List.generate(widget.items.length, (index) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Select Topics'),
+      alignment: Alignment.centerRight,
+      title: Text(widget.title),
       content: SingleChildScrollView(
-        child: ListBody(
-          children: widget.items
-              .map((item) => CheckboxListTile(
-            value: _selectedItems.contains(item),
-            title: Text(item),
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: (isChecked) => _itemChange(item, isChecked!),
-          ))
-              .toList(),
-        ),
-      ),
+          child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height - 100,
+        child: ListView.builder(
+            itemCount: widget.items.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                leading: Checkbox(
+                  value: isChecked![index],
+                  onChanged: (checked) {
+                    setState(
+                      () {
+                        isChecked![index] = checked!;
+                        _itemChange(index, widget.items[index], checked);
+                      },
+                    );
+                  },
+                ),
+                title: Text(
+                  widget.items[index],
+                  style: const TextStyle(color: textColor, fontSize: 16),
+                ),
+              );
+            }),
+      )),
       actions: [
         TextButton(
           child: const Text('Cancel'),

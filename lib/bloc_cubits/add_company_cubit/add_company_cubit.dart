@@ -12,6 +12,7 @@ import 'package:cms/validations/name_validation.dart';
 import 'package:cms/validations/number_validation_dart.dart';
 import 'package:cms/validations/pincode_validation_dart.dart';
 import 'package:cms/validations/website_validation.dart';
+import 'package:cms/widgets/multi_select_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
@@ -122,7 +123,7 @@ class AddCompanyCubit extends Cubit<AddCompanyState> {
         companyCountry: int.parse(state.country.value),
         companyBranch: int.parse(state.city.value),
         companyInfo: state.companyInfo.value);
-
+    print("addCompanyReq $addCompanyReq");
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     _companyRepository.addCompany(addCompanyReq, token).then((value) {
@@ -155,6 +156,13 @@ class AddCompanyCubit extends Cubit<AddCompanyState> {
 
   Future<List<CityData>> getCity(token, int i) async =>
       _companyRepository.fetchCityData(token, i).then((value) {
+        CityResp cityResp = CityResp.fromJson(value);
+        List<CityData> cityData = List<CityData>.from(cityResp.data!);
+        return cityData;
+      });
+
+  Future<List<CityData>> getCityData(token, List<int> selectedIds) async =>
+      _companyRepository.fetchCitysData(token, selectedIds).then((value) {
         CityResp cityResp = CityResp.fromJson(value);
         List<CityData> cityData = List<CityData>.from(cityResp.data!);
         return cityData;

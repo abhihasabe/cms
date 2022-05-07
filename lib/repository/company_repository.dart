@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cms/models/add_comapny_req.dart';
 import 'package:cms/models/employee_resp_model.dart';
 import 'package:cms/theme/app_network_constants.dart';
@@ -23,6 +25,13 @@ class CompanyRepository {
 
   Future fetchCityData(token, int i) async {
     resp = APIManager.getAPICall(CITY_URL + "$i", token);
+    return resp;
+  }
+
+  Future fetchCitysData(token, List<int> selectedIds) async {
+    print("selectedIds ${selectedIds.map((i) => i.toString()).join(",")}");
+    resp = APIManager.getAPICall(
+        CITY_URL + selectedIds.map((i) => i.toString()).join(","), token);
     return resp;
   }
 

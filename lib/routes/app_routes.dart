@@ -6,6 +6,7 @@ import 'package:cms/Screens/hr/compnay/showcompany/hr_company_screen.dart';
 import 'package:cms/Screens/Inventories/home/inventory_home_screen.dart';
 import 'package:cms/Screens/admin/clients/admin_clients_screen.dart';
 import 'package:cms/Screens/admin/inventory/inventory_screen.dart';
+import 'package:cms/Screens/hr/employee/hraddemployee/hr_add_employee_screen.dart';
 import 'package:cms/Screens/hr/employee/hrshowemployee/hr_employee_screen.dart';
 import 'package:cms/Screens/localization_screen/lang_screen.dart';
 import 'package:cms/Screens/admin/projects/projects_screen.dart';
@@ -154,6 +155,13 @@ class Routes {
           child: ChangeNotifierProvider(
               create: (context) => MenuController(),
               child: const HREmployeeScreen()));
+    },
+    hrAddEmployeeScreen: (uri, params) {
+      return VxRoutePage(
+          pageName: "HR Employee",
+          child: ChangeNotifierProvider(
+              create: (context) => MenuController(),
+              child: const HRAddEmployee()));
     },
   });
 }

@@ -34,5 +34,6 @@ const String initialScreen = '/';
 
 //HR
 const String hrEmployeeScreen = 'hremployee';
+const String hrAddEmployeeScreen = 'hraddemployee';
 const String hrCompanyScreen = 'hrcompany';
 const String hrHomeScreen = 'hrHome';

@@ -71,7 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         drawer: PlatFormServices.isDesktop(context)
             ? const AdminSideMenu(bgColor: onPrimaryColor, textColor: textColor)
-            : const AdminSideMenu(bgColor: primaryColor, textColor: textDarkColor),
+            : const AdminSideMenu(
+                bgColor: primaryColor, textColor: textDarkColor),
         body: SafeArea(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,18 +92,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context, state) {
                       if (state is AdminInitial) {
                         return DialogHelper.buildLoading();
-                      }
-                      else if (state is AdminLoading) {
+                      } else if (state is AdminLoading) {
                         return DialogHelper.buildLoading();
-                      }
-                      else if (state is AdminSuccess) {
+                      } else if (state is AdminSuccess) {
                         return state.countData != null
                             ? PlatFormServices.isMobile(context)
                                 ? HomeMobileWidget(countData: state.countData)
                                 : HomeWebWidget(countData: state.countData)
                             : Container();
-                      }
-                      else if (state is AdminError) {
+                      } else if (state is AdminError) {
                         return Center(child: Text("${state.errorMessage}"));
                       }
                       return DialogHelper.buildLoading();
